@@ -38,8 +38,19 @@ export function useAuth() {
   };
 
   const signOut = async () => {
+    // 1. Sign out from Supabase
     const { error } = await supabase.auth.signOut();
-    if (error) console.error('Error signing out:', error.message);
+    if (error) console.error('Error signing out from Supabase:', error.message);
+
+    // 2. Clear vetting cookie via API
+    try {
+      await fetch('/api/gate/logout', { method: 'POST' });
+    } catch (e) {
+      console.error('Error clearing vetting cookie:', e);
+    }
+
+    // 3. Force refresh to trigger middleware redirect to /gate
+    window.location.href = '/';
   };
 
   return {

@@ -2,6 +2,8 @@ import { Nav } from "@/components/Nav";
 import { VideoFeed } from "@/components/VideoFeed";
 import { GlobalChat } from "@/components/GlobalChat";
 
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
   return (
     <main className="min-h-screen relative overflow-x-hidden selection:bg-red-600/30">

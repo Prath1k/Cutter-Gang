@@ -67,18 +67,23 @@ export function Nav() {
                   </button>
                   
                   {/* Sign Out Overlay */}
-                  <div className="absolute right-0 mt-4 w-48 bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-neutral-100 py-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto">
-                    <div className="px-4 py-2 border-b border-neutral-50 mb-1">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Status</p>
-                      <p className="text-xs font-bold truncate">{user.user_metadata.full_name || user.email}</p>
+                  <div className="absolute right-0 top-full pt-4 w-48 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto">
+                    {/* Transparent Bridge to prevent hover gap */}
+                    <div className="absolute top-0 right-0 w-full h-4" />
+                    
+                    <div className="bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-neutral-100 py-2 overflow-hidden">
+                      <div className="px-4 py-2 border-b border-neutral-50 mb-1">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Status</p>
+                        <p className="text-xs font-bold truncate">{user.user_metadata.full_name || user.email}</p>
+                      </div>
+                      <button 
+                        onClick={signOut}
+                        className="w-full text-left px-4 py-2 text-xs font-black uppercase tracking-tighter hover:bg-red-50 hover:text-red-600 flex items-center gap-2 transition-colors"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                      </button>
                     </div>
-                    <button 
-                      onClick={signOut}
-                      className="w-full text-left px-4 py-2 text-xs font-black uppercase tracking-tighter hover:bg-red-50 hover:text-red-600 flex items-center gap-2 transition-colors"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Sign Out
-                    </button>
                   </div>
                 </div>
               </div>
