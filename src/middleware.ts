@@ -17,7 +17,11 @@ export function middleware(request: NextRequest) {
   }
 
   // 2. Check for the vetting cookie
-  const isVetted = request.cookies.get('cutter_vetted')?.value === 'true';
+  const vettingCookie = request.cookies.get('cutter_vetted')?.value;
+  const correctPassword = process.env.SITE_PASSWORD || 'cuttergang';
+  const expectedToken = Buffer.from(`${correctPassword}-vetted`).toString('base64');
+  
+  const isVetted = vettingCookie === expectedToken;
 
   // 3. If not vetted, redirect to the gate
   if (!isVetted) {

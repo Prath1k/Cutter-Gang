@@ -39,10 +39,10 @@ DROP POLICY IF EXISTS "Allow public select on chat_messages" ON chat_messages;
 DROP POLICY IF EXISTS "Allow public insert on chat_messages" ON chat_messages;
 
 CREATE POLICY "Allow public select on videos" ON videos FOR SELECT USING (true);
-CREATE POLICY "Allow public insert on videos" ON videos FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow authenticated insert on videos" ON videos FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
 CREATE POLICY "Allow public select on chat_messages" ON chat_messages FOR SELECT USING (true);
-CREATE POLICY "Allow public insert on chat_messages" ON chat_messages FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow authenticated insert on chat_messages" ON chat_messages FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
 CREATE POLICY "Allow public select on password_attempts" ON password_attempts FOR SELECT USING (true);
 CREATE POLICY "Allow public insert on password_attempts" ON password_attempts FOR INSERT WITH CHECK (true);

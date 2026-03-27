@@ -51,9 +51,11 @@ export async function POST(request: Request) {
     // Clear attempts on success
     await supabase.from('password_attempts').delete().eq('ip', ip);
 
-    // Set cookie (valid for 30 days)
+    // Set cookie with a simple signature (using password as part of the "secret")
+    const vettingToken = Buffer.from(`${correctPassword}-vetted`).toString('base64');
+    
     const cookieStore = await cookies();
-    cookieStore.set('cutter_vetted', 'true', {
+    cookieStore.set('cutter_vetted', vettingToken, {
       maxAge: 60 * 60 * 24 * 30, // 30 days
       path: '/',
       httpOnly: true,
