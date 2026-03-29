@@ -108,36 +108,13 @@ function UploadModal({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{
-          backgroundColor: '#0d0d0d',
-          border: '1px solid #262626',
-          borderRadius: '32px',
-          padding: '40px',
-          width: '100%',
-          maxWidth: '480px',
-          position: 'relative',
-          boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)',
-        }}
+        className="bg-[#0d0d0d] border border-[#262626] rounded-[32px] p-6 sm:p-10 w-full max-w-[480px] relative shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)]"
       >
         <button
           onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '24px',
-            right: '24px',
-            color: '#999',
-            background: 'rgba(255,255,255,0.05)',
-            border: 'none',
-            borderRadius: '50%',
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-          }}
+          className="absolute top-4 right-4 sm:top-6 sm:right-6 text-[#999] bg-white/5 border-none rounded-full w-10 h-10 flex items-center justify-center cursor-pointer hover:bg-white/10 transition-colors"
         >
-          <X style={{ width: 20, height: 20 }} />
+          <X className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
 
         <h2 style={{

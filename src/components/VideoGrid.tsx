@@ -1,17 +1,61 @@
 'use client';
 
 import { useState } from 'react';
-import { Play } from 'lucide-react';
+import { Play, Trash2, Loader2 } from 'lucide-react';
 import { VideoPlayer } from '@/components/VideoPlayer';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/hooks/useAuth';
 
 type VideoItem = {
   id: string;
   title: string;
   url: string | null;
+  user_id?: string;
 };
 
 export function VideoGrid({ items }: { items: VideoItem[] }) {
   const [activeVideo, setActiveVideo] = useState<VideoItem | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { user } = useAuth();
+
+  const handleDeleteVideo = async (e: React.MouseEvent, item: VideoItem) => {
+    e.stopPropagation();
+    if (!user || user.id !== item.user_id || !item.url) return;
+    
+    if (!window.confirm(`Delete "${item.title}" from the gang?`)) return;
+
+    setDeletingId(item.id);
+    try {
+      // 1. Extract filename from URL to delete from storage
+      // Format: .../storage/v1/object/public/videos/filename.mp4
+      const urlParts = item.url.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+
+      if (fileName) {
+        const { error: storageError } = await supabase.storage
+          .from('videos')
+          .remove([fileName]);
+        
+        if (storageError) console.error('Storage delete error:', storageError.message);
+      }
+
+      // 2. Delete from database
+      const { error: dbError } = await supabase
+        .from('videos')
+        .delete()
+        .eq('id', item.id);
+
+      if (dbError) throw dbError;
+
+      // 3. Refresh list
+      window.location.reload();
+    } catch (err) {
+      console.error('Error deleting video:', err);
+      alert('Failed to delete video. Keep trying.');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
     <>
@@ -46,6 +90,22 @@ export function VideoGrid({ items }: { items: VideoItem[] }) {
                     }
                   }}
                 />
+                
+                {/* Delete Button (Owner Only) */}
+                {user && user.id === item.user_id && (
+                  <button
+                    onClick={(e) => handleDeleteVideo(e, item)}
+                    className="absolute top-4 right-4 z-40 bg-black/60 hover:bg-red-600 text-white p-3 rounded-2xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 border border-white/5 active:bg-red-700"
+                    disabled={deletingId === item.id}
+                  >
+                    {deletingId === item.id ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-4 h-4" />
+                    )}
+                  </button>
+                )}
+
                 {/* Play icon overlay - always visible on mobile, hover on desktop */}
                 <div className="absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100">
                   <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-red-600/95 flex items-center justify-center shadow-2xl shadow-red-600/40 transform scale-90 md:scale-100">
@@ -60,7 +120,7 @@ export function VideoGrid({ items }: { items: VideoItem[] }) {
             )}
 
             {/* Bottom Info */}
-            <div className="absolute bottom-6 left-6 right-6 z-30 flex flex-col items-start">
+            <div className="absolute bottom-6 left-6 right-6 z-30 flex flex-col items-start translate-y-0 transition-transform duration-300 group-hover:-translate-y-1">
               <span className="bg-red-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter mb-2 shadow-lg">
                 #CUTTER
               </span>

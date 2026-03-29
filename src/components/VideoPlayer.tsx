@@ -126,213 +126,93 @@ export function VideoPlayer({ url, title, onClose }: VideoPlayerProps) {
       onClick={onClose}
       onMouseMove={resetControlsTimer}
       onTouchStart={resetControlsTimer}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 99999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'rgba(0,0,0,0.95)',
-        cursor: showControls ? 'default' : 'none',
-      }}
+      className={`fixed inset-0 z-[99999] flex items-center justify-center bg-black/95 transition-opacity duration-300 ${showControls ? 'cursor-default' : 'cursor-none'}`}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{
-          position: 'relative',
-          width: '100%',
-          maxWidth: '1200px',
-          maxHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-        }}
+        className="relative w-full max-w-6xl max-h-screen flex flex-col justify-center"
       >
         {/* Title bar */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '12px 16px',
-          opacity: showControls ? 1 : 0,
-          transition: 'opacity 0.3s',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 10,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)',
-        }}>
-          <h2 style={{
-            color: '#fff',
-            fontSize: '14px',
-            fontWeight: 800,
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            margin: 0,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            maxWidth: '70%',
-          }}>
+        <div className={`flex items-center justify-between p-4 sm:p-6 transition-opacity duration-300 absolute top-0 left-0 right-0 z-10 bg-gradient-to-b from-black/80 to-transparent ${showControls ? 'opacity-100' : 'opacity-0'}`}>
+          <h2 className="text-white text-xs sm:text-sm font-black uppercase tracking-widest truncate max-w-[70%] drop-shadow-md">
             {title}
           </h2>
           <button
             onClick={onClose}
-            style={{
-              background: 'rgba(255,255,255,0.1)',
-              border: 'none',
-              borderRadius: '50%',
-              width: '44px',
-              height: '44px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              color: '#fff',
-            }}
+            className="bg-white/10 hover:bg-white/20 border-none rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center cursor-pointer text-white transition-all active:scale-95"
           >
-            <X style={{ width: 24, height: 24 }} />
+            <X className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
 
-        {/* Video */}
+        {/* Video Container */}
         <div
           onClick={togglePlay}
-          style={{ 
-            position: 'relative', 
-            cursor: 'pointer',
-            backgroundColor: '#000',
-            width: '100%',
-            aspectRatio: '16/9',
-            maxHeight: 'calc(100vh - 120px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          className="relative cursor-pointer bg-black w-full flex items-center justify-center overflow-hidden sm:rounded-3xl shadow-2xl"
+          style={{ maxHeight: 'calc(100vh - 80px)' }}
         >
           <video
             ref={videoRef}
             src={url}
-            style={{ 
-              maxWidth: '100%', 
-              maxHeight: '100%',
-              display: 'block' 
-            }}
+            className="max-w-full max-h-full block object-contain aspect-auto h-auto"
             playsInline
           />
 
           {/* Big center play icon when paused */}
           {!isPlaying && (
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: 'rgba(0,0,0,0.2)',
-            }}>
-              <div style={{
-                width: '72px',
-                height: '72px',
-                borderRadius: '50%',
-                backgroundColor: 'rgba(220,38,38,0.9)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 0 40px rgba(0,0,0,0.5)',
-              }}>
-                <Play style={{ width: 32, height: 32, color: '#fff', marginLeft: '4px' }} />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[2px]">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-red-600/90 flex items-center justify-center shadow-2xl shadow-red-600/40 transform hover:scale-110 transition-transform">
+                <Play className="w-8 h-8 sm:w-10 sm:h-10 text-white ml-1.5" />
               </div>
             </div>
           )}
         </div>
 
         {/* Controls bar */}
-        <div style={{
-          padding: '16px 12px',
-          opacity: showControls ? 1 : 0,
-          transition: 'opacity 0.3s',
-          background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: 10,
-        }}>
+        <div className={`p-4 sm:p-8 transition-opacity duration-300 bg-gradient-to-t from-black/80 via-black/40 to-transparent absolute bottom-0 left-0 right-0 z-10 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
           {/* Progress bar with larger tap area */}
           <div
             ref={progressRef}
             onClick={seekTo}
             onTouchStart={(e) => { e.stopPropagation(); resetControlsTimer(); }}
             onTouchMove={seekTo}
-            style={{
-              width: '100%',
-              height: '24px',
-              display: 'flex',
-              alignItems: 'center',
-              cursor: 'pointer',
-              marginBottom: '4px',
-              position: 'relative',
-            }}
+            className="w-full h-6 flex items-center cursor-pointer mb-2 relative group/progress"
           >
-            <div style={{
-              width: '100%',
-              height: '4px',
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              borderRadius: '2px',
-              position: 'relative',
-            }}>
-              <div style={{
-                width: `${progress}%`,
-                height: '100%',
-                backgroundColor: '#dc2626',
-                borderRadius: '2px',
-                position: 'relative',
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  right: '-6px',
-                  top: '-4px',
-                  width: '12px',
-                  height: '12px',
-                  backgroundColor: '#dc2626',
-                  borderRadius: '50%',
-                  boxShadow: '0 0 10px rgba(0,0,0,0.5)',
-                }} />
+            <div className="w-full h-1 sm:h-1.5 bg-white/20 rounded-full relative overflow-hidden">
+              <div 
+                className="h-full bg-red-600 rounded-full relative transition-all duration-100 ease-out"
+                style={{ width: `${progress}%` }}
+              >
+                <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 bg-red-600 rounded-full shadow-lg border border-white/20 opacity-0 group-hover/progress:opacity-100" />
               </div>
             </div>
           </div>
 
           {/* Buttons row */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px sm:gap-16' }}>
-              <button onClick={togglePlay} style={btnStyle}>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <button onClick={togglePlay} className="control-btn p-3 sm:p-4 rounded-full bg-white/5 hover:bg-white/10 text-white transition-all active:scale-90">
                 {isPlaying
-                  ? <Pause style={{ width: 22, height: 22, color: '#fff' }} />
-                  : <Play style={{ width: 22, height: 22, color: '#fff', marginLeft: '2px' }} />
+                  ? <Pause className="w-5 h-5 sm:w-6 sm:h-6" />
+                  : <Play className="w-5 h-5 sm:w-6 sm:h-6 ml-0.5" />
                 }
               </button>
-              <button onClick={replay} style={btnStyle}>
-                <RotateCcw style={{ width: 18, height: 18, color: '#fff' }} />
+              <button onClick={replay} className="control-btn p-3 sm:p-4 rounded-full bg-white/5 hover:bg-white/10 text-white transition-all active:scale-90">
+                <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
-              <button onClick={toggleMute} style={btnStyle}>
+              <button onClick={toggleMute} className="control-btn p-3 sm:p-4 rounded-full bg-white/5 hover:bg-white/10 text-white transition-all active:scale-90">
                 {isMuted
-                  ? <VolumeX style={{ width: 22, height: 22, color: '#fff' }} />
-                  : <Volume2 style={{ width: 22, height: 22, color: '#fff' }} />
+                  ? <VolumeX className="w-5 h-5 sm:w-6 sm:h-6" />
+                  : <Volume2 className="w-5 h-5 sm:w-6 sm:h-6" />
                 }
               </button>
-              <span style={{ color: '#fff', fontSize: '11px', fontWeight: 'bold', fontFamily: 'monospace' }}>
+              <span className="text-white text-[10px] sm:text-xs font-black tracking-widest font-mono opacity-80 whitespace-nowrap hidden xs:block">
                 {formatTime(currentTime)} / {formatTime(duration)}
               </span>
             </div>
-            <button onClick={toggleFullscreen} style={btnStyle}>
-              <Maximize style={{ width: 20, height: 20, color: '#fff' }} />
+            
+            <button onClick={toggleFullscreen} className="control-btn p-3 sm:p-4 rounded-full bg-white/5 hover:bg-white/10 text-white transition-all active:scale-90">
+              <Maximize className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>
@@ -342,14 +222,3 @@ export function VideoPlayer({ url, title, onClose }: VideoPlayerProps) {
   );
 }
 
-const btnStyle: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.1)',
-  border: 'none',
-  borderRadius: '50%',
-  width: '48px',
-  height: '48px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  cursor: 'pointer',
-};
