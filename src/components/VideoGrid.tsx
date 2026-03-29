@@ -5,6 +5,7 @@ import { Play, Trash2, Loader2 } from 'lucide-react';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
+import { ADMIN_USER_ID } from '@/lib/constants';
 
 type VideoItem = {
   id: string;
@@ -20,7 +21,11 @@ export function VideoGrid({ items }: { items: VideoItem[] }) {
 
   const handleDeleteVideo = async (e: React.MouseEvent, item: VideoItem) => {
     e.stopPropagation();
-    if (!user || user.id !== item.user_id || !item.url) return;
+    
+    const isAdmin = user && user.id === ADMIN_USER_ID;
+    const isOwner = user && user.id === item.user_id;
+
+    if ((!isAdmin && !isOwner) || !item.url) return;
     
     if (!window.confirm(`Delete "${item.title}" from the gang?`)) return;
 
@@ -91,8 +96,8 @@ export function VideoGrid({ items }: { items: VideoItem[] }) {
                   }}
                 />
                 
-                {/* Delete Button (Owner Only) */}
-                {user && user.id === item.user_id && (
+                {/* Delete Button (Owner or Admin) */}
+                {user && (user.id === item.user_id || user.id === ADMIN_USER_ID) && (
                   <button
                     onClick={(e) => handleDeleteVideo(e, item)}
                     className="absolute top-4 right-4 z-40 bg-black/60 hover:bg-red-600 text-white p-3 rounded-2xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 active:scale-95 border border-white/5 active:bg-red-700"
